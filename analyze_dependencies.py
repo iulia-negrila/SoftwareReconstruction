@@ -4,6 +4,7 @@ from git import Repo
 from pathlib import Path
 import networkx as nx
 import matplotlib.pyplot as plt
+import ast
 
 # ---------- 1. Clone Repo If Not Exists Locally ----------
 
@@ -32,31 +33,35 @@ def module_name_from_file_path(full_path):
     return file_name
 
 
-# ---------- 3. Import Parsing ----------
+# ---------- 3. Import Parsing using AST (Abstract Syntax Tree) ----------
 
-def import_from_line(line):
+def imports_from_file_ast(file_path_str, internal_only=True, project_root="zeeguu"):
     try:
-        y = re.search(r"^from (\S+)", line)
-        if not y:
-            y = re.search(r"^import (\S+)", line)
-        return y.group(1) if y else None
-    except:
-        return None
-
-
-def imports_from_file(file):
-    try:
-        with open(file, encoding='utf8') as f:
-            lines = f.readlines()
-    except:
+        with open(file_path_str, encoding='utf8') as f:
+            tree = ast.parse(f.read(), filename=file_path_str)
+    except Exception as e:
+        print(f"Failed to parse {file_path_str}: {e}")
         return []
 
-    all_imports = []
-    for line in lines:
-        imp = import_from_line(line)
-        if imp:
-            all_imports.append(imp)
-    return all_imports
+    imports = []
+
+    # go through every node in AST (functions, classes, imports etc.)
+    for node in ast.walk(tree):
+        # handle lines like 'import flask, os, sys'
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                imports.append(alias.name)
+
+        # handle lines like 'from flask import Flask'
+        elif isinstance(node, ast.ImportFrom):
+            if node.module: # this gives you 'flask' for example
+                imports.append(node.module)
+
+    # filter out all external libraries (like flask) and keep only the ones from zeeguu folder
+    if internal_only:
+        imports = [imp for imp in imports if imp.startswith(project_root)]
+
+    return list(set(imports))  # remove duplicates
 
 
 # ---------- 4. Dependency Graph Construction ----------
@@ -70,7 +75,9 @@ def dependencies_digraph(code_root_folder):
         source_module = module_name_from_file_path(file_path_str)
         G.add_node(source_module)
 
-        for target in imports_from_file(file_path_str):
+        targets = imports_from_file_ast(file_path_str)
+        print(f"{source_module} imports {targets}")
+        for target in targets:
             G.add_edge(source_module, target)
     return G
 
