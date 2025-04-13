@@ -172,6 +172,40 @@ def draw_colored_graph_top_level(G, size=(25, 25), with_labels=True, show_weight
     plt.axis("off")
     plt.show()
 
+def compute_pagerank(G):
+    return nx.pagerank(G)
+
+def draw_graph_with_pagerank(G, size=(25, 25), with_labels=True, top_k=10):
+    pagerank = compute_pagerank(G)
+    max_rank = max(pagerank.values())
+
+    # Normalize sizes for better visualization
+    node_sizes = [300 + 3000 * (pagerank[node] / max_rank) for node in G.nodes]
+
+    # Color nodes by top-level group
+    groups = set(get_top_level_group(node) for node in G.nodes)
+    color_palette = plt.get_cmap("tab10")
+    group_colors = {
+        group: color_palette(i % 10)[:3]
+        for i, group in enumerate(groups)
+    }
+    node_colors = [group_colors[get_top_level_group(node)] for node in G.nodes]
+
+    # Layout and draw
+    plt.figure(figsize=size)
+    pos = nx.spring_layout(G, k=1.8, iterations=100)
+    nx.draw(G, pos, node_size=node_sizes, node_color=node_colors, edge_color="gray", with_labels=with_labels, font_size=6)
+
+    # Print top-k important nodes
+    top_nodes = sorted(pagerank.items(), key=lambda x: x[1], reverse=True)[:top_k]
+    print("\nTop {} modules by PageRank:".format(top_k))
+    for rank, (node, score) in enumerate(top_nodes, 1):
+        print(f"{rank}. {node} — score: {score:.4f}")
+
+    plt.title("Zeeguu Dependency Graph (PageRank Highlighted)")
+    plt.axis("off")
+    plt.show()
+
 # ---------- 6. Run Everything ----------
 
 if __name__ == "__main__":
@@ -182,4 +216,5 @@ if __name__ == "__main__":
     collapsed_G = collapse_graph_by_module(DG, depth=3)
     focused_G = filter_to_main_modules(collapsed_G)
     print(f"Collapsed main modules graph: {len(collapsed_G.nodes)} nodes, {len(collapsed_G.edges)} edges")
-    draw_colored_graph_top_level(focused_G, (18, 18), with_labels=True, show_weights=True)
+    #draw_colored_graph_top_level(focused_G, (18, 18), with_labels=True, show_weights=True)
+    draw_graph_with_pagerank(focused_G, size=(20, 20), with_labels=True)
