@@ -71,6 +71,10 @@ def dependencies_digraph(code_root_folder):
     G = nx.DiGraph()
 
     for file in files:
+        # Skip files in 'test', 'tests', or 'tools' folders
+        if any(part in {"test", "tests", "tools"} for part in file.parts):
+            continue
+
         file_path_str = str(file)
         source_module = module_name_from_file_path(file_path_str)
         G.add_node(source_module)
