@@ -92,7 +92,7 @@ def dependencies_digraph(code_root_folder):
 
 # ---------- 5. Graph Drawing ----------
 
-MAIN_MODULES = ["zeeguu.core", "zeeguu.api", "zeeguu.cl", "zeeguu.config", "zeeguu.logging"]
+MAIN_MODULES = ["zeeguu.core", "zeeguu.api", "zeeguu.cl", "zeeguu.config", "zeeguu.logging"] # ["zeeguu.core", "zeeguu.api"]
 
 def is_main_module(module_name):
     return any(module_name.startswith(m) for m in MAIN_MODULES)
@@ -206,6 +206,21 @@ def draw_graph_with_pagerank(G, size=(25, 25), with_labels=True, top_k=10):
     plt.axis("off")
     plt.show()
 
+def extract_subgraph_by_top_pagerank(G, top_k=10, hops=1):
+    # Get top k nodes by pageRank
+    pagerank = nx.pagerank(G)
+    top_nodes = [node for node, _ in sorted(pagerank.items(), key=lambda x: x[1], reverse=True)[:top_k]]
+
+    # Get nodes reachable within `hops` steps from top nodes
+    nodes_to_include = set()
+    for node in top_nodes:
+        ego_net = nx.ego_graph(G, node, radius=hops, undirected=False)
+        nodes_to_include.update(ego_net.nodes)
+
+    subG = G.subgraph(nodes_to_include).copy()
+    return subG
+
+
 # ---------- 6. Run Everything ----------
 
 if __name__ == "__main__":
@@ -217,4 +232,8 @@ if __name__ == "__main__":
     focused_G = filter_to_main_modules(collapsed_G)
     print(f"Collapsed main modules graph: {len(collapsed_G.nodes)} nodes, {len(collapsed_G.edges)} edges")
     #draw_colored_graph_top_level(focused_G, (18, 18), with_labels=True, show_weights=True)
-    draw_graph_with_pagerank(focused_G, size=(20, 20), with_labels=True)
+    #draw_graph_with_pagerank(focused_G, size=(20, 20), with_labels=True)
+
+    subgraph = extract_subgraph_by_top_pagerank(focused_G, top_k=10, hops=1)
+    print(f"Subgraph has {len(subgraph.nodes)} nodes and {len(subgraph.edges)} edges.")
+    draw_graph_with_pagerank(subgraph, size=(18, 18), with_labels=True)
