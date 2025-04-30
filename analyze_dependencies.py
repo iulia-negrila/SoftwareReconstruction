@@ -10,6 +10,7 @@ from pydriller import Repository
 from pydriller.domain.commit import ModificationType
 from collections import defaultdict
 import matplotlib as mpl
+import community.community_louvain as community_louvain
 
 # ---------- 1. Clone Repo If Not Exists Locally ----------
 
@@ -225,6 +226,35 @@ def extract_subgraph_by_top_pagerank(G, top_k=10, hops=1):
     subG = G.subgraph(nodes_to_include).copy()
     return subG
 
+
+def draw_graph_with_communities(G, size=(25, 25), with_labels=True):
+    # Compute communities using Louvain method
+    partition = community_louvain.best_partition(G.to_undirected())
+
+    # Assign a color to each community
+    communities = set(partition.values())
+    color_palette = plt.get_cmap("tab20")
+    community_colors = {
+        comm: color_palette(i % 20) for i, comm in enumerate(communities)
+    }
+    node_colors = [community_colors[partition[node]] for node in G.nodes]
+
+    # Layout and draw
+    plt.figure(figsize=size)
+    pos = nx.spring_layout(G, k=1.8, iterations=100)
+    nx.draw(G, pos, node_size=800, node_color=node_colors, edge_color="gray", with_labels=with_labels, font_size=8)
+
+    plt.title("Dependency Graph with Community Coloring (Louvain)")
+    plt.axis("off")
+    plt.show()
+
+    # Print community assignment summary
+    print("\nCommunity sizes:")
+    from collections import Counter
+    counts = Counter(partition.values())
+    for comm, count in counts.items():
+        print(f"Community {comm}: {count} modules")
+
 # 5.1 Evolutionary Analysis - churn
 
 def module_name_from_rel_path(rel_path):
@@ -318,6 +348,60 @@ def draw_graph_with_churn(G, churn_map, size=(20, 20), with_labels=True):
     plt.show()
 
 
+def draw_combined_graph(G, churn_map, size=(25, 25), top_k_labels=10):
+    # Compute community (Louvain)
+    partition = community_louvain.best_partition(G.to_undirected())
+    communities = set(partition.values())
+
+    # Assign colors to communities
+    color_palette = plt.get_cmap("tab20")
+    community_colors = {
+        com: color_palette(i % 20)[:3]
+        for i, com in enumerate(communities)
+    }
+    node_colors = [community_colors[partition[node]] for node in G.nodes]
+
+    # Compute PageRank
+    pagerank = nx.pagerank(G)
+    max_rank = max(pagerank.values())
+    node_sizes = [400 + 3000 * (pagerank[node] / max_rank) for node in G.nodes]
+
+    # Compute churn-based border width
+    max_churn = max(churn_map.values()) if churn_map else 1
+    edge_widths = [1 + 4 * (churn_map.get(node, 0) / max_churn) for node in G.nodes]
+
+    # Layout
+    pos = nx.spring_layout(G, k=1.8, iterations=100)
+    fig, ax = plt.subplots(figsize=size)
+
+    # Draw nodes with edge color (borders) based on churn
+    for i, node in enumerate(G.nodes):
+        nx.draw_networkx_nodes(
+            G,
+            pos,
+            nodelist=[node],
+            node_color=[node_colors[i]],
+            node_size=node_sizes[i],
+            edgecolors='black',
+            linewidths=edge_widths[i],
+            ax=ax
+        )
+
+    # Draw edges
+    nx.draw_networkx_edges(G, pos, edge_color="gray", alpha=0.6, ax=ax)
+
+    top_nodes = sorted(pagerank.items(), key=lambda x: x[1], reverse=True)[:top_k_labels]
+    nx.draw_networkx_labels(G, pos, font_size=7, ax=ax)
+
+    plt.title("Combined Dependency View: Community (color), Importance (size), Churn (border)")
+    plt.axis("off")
+    plt.show()
+
+    # Print top nodes
+    print("\nTop {} modules by PageRank:".format(top_k_labels))
+    for rank, (node, score) in enumerate(top_nodes, 1):
+        print(f"{rank}. {node} — score: {score:.4f}")
+
 # ---------- 6. Run Everything ----------
 
 if __name__ == "__main__":
@@ -336,4 +420,8 @@ if __name__ == "__main__":
     # draw_graph_with_pagerank(subgraph, size=(18, 18), with_labels=True)
 
     churn_map = compute_churn(CODE_ROOT_FOLDER)
-    draw_graph_with_churn(focused_G, churn_map, size=(20, 20), with_labels=True)
+    # draw_graph_with_churn(focused_G, churn_map, size=(20, 20), with_labels=True)
+
+    # draw_graph_with_communities(focused_G, size=(22, 22), with_labels=True)
+
+    draw_combined_graph(focused_G, churn_map, size=(24, 24), top_k_labels=10)
