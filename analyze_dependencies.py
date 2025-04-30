@@ -6,6 +6,10 @@ from pathlib import Path
 import networkx as nx
 import matplotlib.pyplot as plt
 import ast
+from pydriller import Repository
+from pydriller.domain.commit import ModificationType
+from collections import defaultdict
+import matplotlib as mpl
 
 # ---------- 1. Clone Repo If Not Exists Locally ----------
 
@@ -18,6 +22,7 @@ if not os.path.exists(CODE_ROOT_FOLDER):
     Repo.clone_from(PROJECT_GITHUB, CODE_ROOT_FOLDER)
 else:
     print("Repository already exists.")
+    print(CODE_ROOT_FOLDER)
 
 
 # ---------- 2. Helper Function for Paths & Module Names ----------
@@ -220,6 +225,98 @@ def extract_subgraph_by_top_pagerank(G, top_k=10, hops=1):
     subG = G.subgraph(nodes_to_include).copy()
     return subG
 
+# 5.1 Evolutionary Analysis - churn
+
+def module_name_from_rel_path(rel_path):
+    """Convert relative file path to module name."""
+    if rel_path is None:
+        return None
+    file_name = rel_path.replace("/__init__.py", "").replace("\\__init__.py", "")
+    file_name = file_name.replace("/", ".").replace("\\", ".")
+    file_name = file_name.replace(".py", "")
+    return file_name
+
+def compute_churn(repo_dir):
+    """
+    Computes churn (number of commits touching each module) using PyDriller
+    """
+
+    churn_counts = defaultdict(int)
+
+    print("Computing churn...")
+    for commit in Repository(repo_dir).traverse_commits():
+        for mod in commit.modified_files:
+            try:
+                new_path = mod.new_path
+                old_path = mod.old_path
+
+                if new_path is None and old_path is None:
+                    continue
+
+                if mod.change_type == ModificationType.RENAME:
+                    churn_counts[module_name_from_rel_path(new_path)] = churn_counts.get(module_name_from_rel_path(old_path), 0) + 1
+                    churn_counts.pop(module_name_from_rel_path(old_path), None)
+
+                elif mod.change_type == ModificationType.DELETE:
+                    churn_counts.pop(module_name_from_rel_path(old_path), None)
+
+                elif mod.change_type == ModificationType.ADD:
+                    churn_counts[module_name_from_rel_path(new_path)] = 1
+
+                else: # modification to existing file
+                    churn_counts[module_name_from_rel_path(old_path)] += 1
+            except Exception as e:
+                print(f"Something went wrong with: {mod}")
+                pass
+
+    print("\n--- Churn Computation Finished ---\n")
+    return churn_counts
+
+def draw_graph_with_churn(G, churn_map, size=(20, 20), with_labels=True):
+    fig, ax = plt.subplots(figsize=size)  # CREATE AXES explicitly
+    pos = nx.spring_layout(G, k=1.8, iterations=100)
+
+    # Normalize churn values for coloring
+    churn_values = [churn_map.get(node, 0) for node in G.nodes]
+    max_churn = max(churn_values) if churn_values else 1  # prevent division by zero
+
+    # Print churn value for each node
+    print("\nChurn values per module:")
+    for node in G.nodes:
+        print(f"{node}: {churn_map.get(node, 0)}")
+
+    # Create a color map
+    cmap = plt.get_cmap("Reds")
+    norm = mpl.colors.Normalize(vmin=0, vmax=max_churn)
+
+    # Map normalized colors manually
+    node_colors = [cmap(norm(churn_map.get(node, 0))) for node in G.nodes]
+
+    # Draw nodes
+    nodes = nx.draw_networkx_nodes(
+        G,
+        pos,
+        node_color=node_colors,
+        node_size=800,
+        alpha=0.9,
+        ax=ax  # <--- draw nodes on 'ax'
+    )
+
+    # Draw edges
+    nx.draw_networkx_edges(G, pos, edge_color="gray", ax=ax)
+
+    if with_labels:
+        nx.draw_networkx_labels(G, pos, font_size=8, ax=ax)
+
+    # Add colorbar on the correct Axes
+    sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+    sm.set_array([])
+    fig.colorbar(sm, ax=ax, shrink=0.6, label="Churn")
+
+    plt.title("Dependency Graph with Churn Highlighted")
+    plt.axis("off")
+    plt.show()
+
 
 # ---------- 6. Run Everything ----------
 
@@ -234,6 +331,9 @@ if __name__ == "__main__":
     #draw_colored_graph_top_level(focused_G, (18, 18), with_labels=True, show_weights=True)
     #draw_graph_with_pagerank(focused_G, size=(20, 20), with_labels=True)
 
-    subgraph = extract_subgraph_by_top_pagerank(focused_G, top_k=10, hops=1)
-    print(f"Subgraph has {len(subgraph.nodes)} nodes and {len(subgraph.edges)} edges.")
-    draw_graph_with_pagerank(subgraph, size=(18, 18), with_labels=True)
+    # subgraph = extract_subgraph_by_top_pagerank(focused_G, top_k=10, hops=1)
+    # print(f"Subgraph has {len(subgraph.nodes)} nodes and {len(subgraph.edges)} edges.")
+    # draw_graph_with_pagerank(subgraph, size=(18, 18), with_labels=True)
+
+    churn_map = compute_churn(CODE_ROOT_FOLDER)
+    draw_graph_with_churn(focused_G, churn_map, size=(20, 20), with_labels=True)
