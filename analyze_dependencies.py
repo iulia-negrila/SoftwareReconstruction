@@ -1,6 +1,4 @@
 import os
-import random
-import re
 from git import Repo
 from pathlib import Path
 import networkx as nx
@@ -11,6 +9,8 @@ from pydriller.domain.commit import ModificationType
 from collections import defaultdict
 import matplotlib as mpl
 import community.community_louvain as community_louvain
+from matplotlib import colors as mcolors
+import py4cytoscape as p4c
 
 # ---------- 1. Clone Repo If Not Exists Locally ----------
 
@@ -136,10 +136,15 @@ def collapse_graph_by_module(G, depth=3):
 
     return collapsed_G
 
-def draw_graph(G, size=(20, 20), with_labels=True):
+def draw_graph(G, size=(20, 20), with_labels=True, show_weights=True):
     plt.figure(figsize=size)
     pos = nx.spring_layout(G, k=0.5, iterations=50)
     nx.draw(G, pos, node_size=500, node_color="skyblue", edge_color="gray", with_labels=with_labels, font_size=8)
+
+    if show_weights:
+        edge_labels = nx.get_edge_attributes(G, 'weight')
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=7)
+
     plt.title("Dependency Graph")
     plt.axis("off")
     plt.show()
@@ -181,7 +186,7 @@ def draw_colored_graph_top_level(G, size=(25, 25), with_labels=True, show_weight
 def compute_pagerank(G):
     return nx.pagerank(G)
 
-def draw_graph_with_pagerank(G, size=(25, 25), with_labels=True, top_k=10):
+def draw_graph_with_pagerank(G, size=(25, 25), with_labels=True, top_k=10, show_weights=True):
     pagerank = compute_pagerank(G)
     max_rank = max(pagerank.values())
 
@@ -201,6 +206,10 @@ def draw_graph_with_pagerank(G, size=(25, 25), with_labels=True, top_k=10):
     plt.figure(figsize=size)
     pos = nx.spring_layout(G, k=1.8, iterations=100)
     nx.draw(G, pos, node_size=node_sizes, node_color=node_colors, edge_color="gray", with_labels=with_labels, font_size=6)
+
+    if show_weights:
+        edge_labels = nx.get_edge_attributes(G, 'weight')
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=6)
 
     # Print top-k important nodes
     top_nodes = sorted(pagerank.items(), key=lambda x: x[1], reverse=True)[:top_k]
@@ -227,7 +236,7 @@ def extract_subgraph_by_top_pagerank(G, top_k=10, hops=1):
     return subG
 
 
-def draw_graph_with_communities(G, size=(25, 25), with_labels=True):
+def draw_graph_with_communities(G, size=(25, 25), with_labels=True, show_weights=True):
     # Compute communities using Louvain method
     partition = community_louvain.best_partition(G.to_undirected())
 
@@ -243,6 +252,10 @@ def draw_graph_with_communities(G, size=(25, 25), with_labels=True):
     plt.figure(figsize=size)
     pos = nx.spring_layout(G, k=1.8, iterations=100)
     nx.draw(G, pos, node_size=800, node_color=node_colors, edge_color="gray", with_labels=with_labels, font_size=8)
+
+    if show_weights:
+        edge_labels = nx.get_edge_attributes(G, 'weight')
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=7)
 
     plt.title("Dependency Graph with Community Coloring (Louvain)")
     plt.axis("off")
@@ -348,7 +361,7 @@ def draw_graph_with_churn(G, churn_map, size=(20, 20), with_labels=True):
     plt.show()
 
 
-def draw_combined_graph(G, churn_map, size=(25, 25), top_k_labels=10):
+def draw_combined_graph(G, churn_map, size=(25, 25), top_k_labels=10, show_weights=True):
     # Compute community (Louvain)
     partition = community_louvain.best_partition(G.to_undirected())
     communities = set(partition.values())
@@ -388,12 +401,21 @@ def draw_combined_graph(G, churn_map, size=(25, 25), top_k_labels=10):
         )
 
     # Draw edges
-    nx.draw_networkx_edges(G, pos, edge_color="gray", alpha=0.6, ax=ax)
+    # Scale edge width by weight
+    weights = [G[u][v].get('weight', 1) for u, v in G.edges()]
+    max_weight = max(weights) if weights else 1
+    scaled_widths = [1 + 4 * (w / max_weight) for w in weights]
+
+    nx.draw_networkx_edges(G, pos, width=scaled_widths, edge_color="gray", alpha=0.6, arrows=True, ax=ax)
+
+    if show_weights:
+        edge_labels = nx.get_edge_attributes(G, 'weight')
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=6)
 
     top_nodes = sorted(pagerank.items(), key=lambda x: x[1], reverse=True)[:top_k_labels]
     nx.draw_networkx_labels(G, pos, font_size=7, ax=ax)
 
-    plt.title("Combined Dependency View: Community (color), Importance (size), Churn (border)")
+    plt.title("Combined Dependency View: Community (color), Importance/PageRank (size), Churn (border)")
     plt.axis("off")
     plt.show()
 
@@ -401,6 +423,141 @@ def draw_combined_graph(G, churn_map, size=(25, 25), top_k_labels=10):
     print("\nTop {} modules by PageRank:".format(top_k_labels))
     for rank, (node, score) in enumerate(top_nodes, 1):
         print(f"{rank}. {node} — score: {score:.4f}")
+
+# 5.2 Visualization -> use Cytoscape
+
+def export_graph_to_graphml(G, filename, pagerank=None, churn=None, community=None):
+    # Add attributes to nodes
+    for node in G.nodes:
+        if pagerank:
+            G.nodes[node]['pagerank'] = pagerank.get(node, 0)
+        if churn:
+            G.nodes[node]['churn'] = churn.get(node, 0)
+        if community:
+            G.nodes[node]['community'] = community.get(node, -1)
+
+    # Export to GraphML
+    nx.write_graphml(G, filename)
+    print(f"Graph exported to {filename}")
+
+
+# automation script - export to cytoscape
+def visualize_in_cytoscape(graphml_file="zeeguu_dependency.graphml"):
+    """
+    Load the GraphML file into Cytoscape and apply visualizations using py4cytoscape.
+    Visualization matches the combined_graph from NetworkX:
+    - Node size based on PageRank
+    - Node border width based on churn
+    - Node color based on community
+    - Edge width based on weight (number of imports)
+
+    Args:
+        graphml_file: Path to the GraphML file
+    """
+
+    # Connect to Cytoscape
+    try:
+        p4c.cytoscape_ping()
+        print("Connected to Cytoscape.")
+    except Exception as e:
+        print("Error: Could not connect to Cytoscape. Is it running?")
+        exit()
+
+    # Delete existing network (if any)
+    try:
+        networks = p4c.get_network_list()
+        if "Zeeguu Dependency Network" in networks:
+            p4c.delete_network("Zeeguu Dependency Network")
+    except:
+        pass
+
+    # Load GraphML and rename network
+    net_suid = p4c.import_network_from_file(graphml_file)
+    p4c.rename_network("Zeeguu Dependency Network", network=net_suid)
+
+    # Extract unique community values safely
+    try:
+        community_df = p4c.get_table_columns("node", "community")
+        community_raw = community_df["community"].tolist()
+        print("Community raw: ", community_raw)
+        community_values = sorted(set(str(c) for c in community_raw if str(c).isdigit()))
+        print("Community values: ", community_values)
+    except Exception as e:
+        print("Failed to extract community values. Defaulting to 0 only.")
+        community_values = [0]
+
+    # Generate community → color mapping (discrete)
+    tab20 = plt.get_cmap("tab20")
+    color_mapping = {
+        str(c): mcolors.to_hex(tab20(i % 20))
+        for i, c in enumerate(community_values)
+    }
+    print("Color mapping : ", color_mapping)
+
+    # Define visual mappings
+    node_size = p4c.map_visual_property('NODE_SIZE', 'pagerank', 'c', [0.0, 0.2], [40, 150])
+    border_width = p4c.map_visual_property('NODE_BORDER_WIDTH', 'churn', 'c', [0, 300], [1, 12])
+    node_color = p4c.map_visual_property('NODE_FILL_COLOR', 'community', 'd',
+                                         list(color_mapping.keys()), list(color_mapping.values()))
+    edge_width = p4c.map_visual_property('EDGE_WIDTH', 'weight', 'c', [1, 5], [1, 8])
+    node_labels = p4c.map_visual_property('NODE_LABEL', 'name', 'p')
+
+    defaults = {
+        'NODE_SHAPE': 'ellipse',
+        'NODE_LABEL_POSITION': 'c,c,c,0.00,0.00',
+        'NODE_LABEL_FONT_SIZE': 12,
+        'NODE_BORDER_COLOR': '#000000',
+        'NODE_BORDER_PAINT': '#000000',
+        'EDGE_TRANSPARENCY': 120,
+        'NODE_TRANSPARENCY': 220,
+        'EDGE_TARGET_ARROW_SHAPE': 'ARROW',
+        'EDGE_STROKE_UNSELECTED_PAINT': '#808080'
+    }
+
+    # Create visual style
+    style_name = 'Zeeguu_Combined_Style'
+    try:
+        if style_name in p4c.get_visual_style_names():
+            p4c.delete_visual_style(style_name)
+    except:
+        pass
+
+    p4c.create_visual_style(style_name, defaults=defaults)
+    p4c.update_style_mapping(style_name, node_size)
+    p4c.update_style_mapping(style_name, border_width)
+    p4c.update_style_mapping(style_name, node_color)
+    p4c.update_style_mapping(style_name, edge_width)
+    p4c.update_style_mapping(style_name, node_labels)
+
+    p4c.set_visual_style(style_name)
+
+    # Apply layout
+    p4c.layout_network('force-directed')
+
+    print("Cytoscape visualization complete.")
+
+
+# Update the export function to ensure we have all necessary attributes
+def export_graph_for_cytoscape(G, pagerank, churn_map, partition, filename="zeeguu_dependency.graphml"):
+    """
+    Export a NetworkX graph to GraphML for Cytoscape with attributes:
+    - PageRank
+    - Churn
+    - Community
+    - Name (for labels)
+    - Edge weights
+    """
+    nx.set_node_attributes(G, pagerank, "pagerank")
+    nx.set_node_attributes(G, churn_map, "churn")
+    nx.set_node_attributes(G, partition, "community")
+    nx.set_node_attributes(G, {n: n for n in G.nodes}, "name")
+
+    for u, v, data in G.edges(data=True):
+        data["weight"] = int(data.get("weight", 1))
+
+    nx.write_graphml(G, filename)
+    print(f"Graph exported to {filename}")
+    return filename
 
 # ---------- 6. Run Everything ----------
 
@@ -419,9 +576,27 @@ if __name__ == "__main__":
     # print(f"Subgraph has {len(subgraph.nodes)} nodes and {len(subgraph.edges)} edges.")
     # draw_graph_with_pagerank(subgraph, size=(18, 18), with_labels=True)
 
-    churn_map = compute_churn(CODE_ROOT_FOLDER)
+    # churn_map = compute_churn(CODE_ROOT_FOLDER)
     # draw_graph_with_churn(focused_G, churn_map, size=(20, 20), with_labels=True)
 
     # draw_graph_with_communities(focused_G, size=(22, 22), with_labels=True)
 
-    draw_combined_graph(focused_G, churn_map, size=(24, 24), top_k_labels=10)
+    churn_map = compute_churn(CODE_ROOT_FOLDER)
+    pagerank = compute_pagerank(focused_G)
+    partition = community_louvain.best_partition(focused_G.to_undirected())
+
+    # draw_combined_graph(focused_G, churn_map, size=(24, 24), top_k_labels=10)
+
+    graphml_file = export_graph_for_cytoscape(focused_G, pagerank, churn_map, partition)
+    try:
+        visualize_in_cytoscape(graphml_file)
+    except Exception as e:
+        print(f"Error during Cytoscape visualization: {e}")
+
+    # export_graph_to_graphml(
+    #     focused_G,
+    #     "zeeguu_combined.graphml",
+    #     pagerank=pagerank,
+    #     churn=churn_map,
+    #     community=partition
+    # )
