@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d0" for="node" attr.name="type" attr.type="string" />
+  <graph edgedefault="directed">
+    <node id="mysql">
+      <data key="d0">service</data>
+    </node>
+    <node id="fmd_mysql">
+      <data key="d0">service</data>
+    </node>
+    <node id="elasticsearch_v8">
+      <data key="d0">service</data>
+    </node>
+    <node id="readability_server">
+      <data key="d0">service</data>
+    </node>
+    <node id="embedding_api">
+      <data key="d0">service</data>
+    </node>
+    <node id="zapi">
+      <data key="d0">service</data>
+    </node>
+    <node id="zapi_dev">
+      <data key="d0">service</data>
+    </node>
+    <node id="zapi_dev_translations">
+      <data key="d0">service</data>
+    </node>
+    <node id="network:zeeguu_backend">
+      <data key="d0">network</data>
+    </node>
+    <edge source="mysql" target="zapi" />
+    <edge source="mysql" target="zapi_dev" />
+    <edge source="mysql" target="zapi_dev_translations" />
+    <edge source="fmd_mysql" target="zapi" />
+    <edge source="fmd_mysql" target="zapi_dev" />
+    <edge source="fmd_mysql" target="zapi_dev_translations" />
+    <edge source="elasticsearch_v8" target="zapi" />
+    <edge source="elasticsearch_v8" target="zapi_dev" />
+    <edge source="elasticsearch_v8" target="zapi_dev_translations" />
+    <edge source="readability_server" target="zapi" />
+    <edge source="readability_server" target="zapi_dev" />
+    <edge source="readability_server" target="zapi_dev_translations" />
+    <edge source="embedding_api" target="zapi" />
+    <edge source="embedding_api" target="zapi_dev" />
+    <edge source="embedding_api" target="zapi_dev_translations" />
+    <edge source="network:zeeguu_backend" target="mysql" />
+    <edge source="network:zeeguu_backend" target="fmd_mysql" />
+    <edge source="network:zeeguu_backend" target="elasticsearch_v8" />
+    <edge source="network:zeeguu_backend" target="readability_server" />
+    <edge source="network:zeeguu_backend" target="embedding_api" />
+    <edge source="network:zeeguu_backend" target="zapi" />
+    <edge source="network:zeeguu_backend" target="zapi_dev" />
+    <edge source="network:zeeguu_backend" target="zapi_dev_translations" />
+  </graph>
+</graphml>

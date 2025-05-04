@@ -1,0 +1,530 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d4" for="edge" attr.name="weight" attr.type="long" />
+  <key id="d3" for="node" attr.name="name" attr.type="string" />
+  <key id="d2" for="node" attr.name="community" attr.type="long" />
+  <key id="d1" for="node" attr.name="churn" attr.type="long" />
+  <key id="d0" for="node" attr.name="pagerank" attr.type="double" />
+  <graph edgedefault="directed">
+    <node id="zeeguu.core.tokenization">
+      <data key="d0">0.024420120571070632</data>
+      <data key="d1">3</data>
+      <data key="d2">0</data>
+      <data key="d3">zeeguu.core.tokenization</data>
+    </node>
+    <node id="zeeguu.config">
+      <data key="d0">0.016229787843067243</data>
+      <data key="d1">5</data>
+      <data key="d2">0</data>
+      <data key="d3">zeeguu.config</data>
+    </node>
+    <node id="zeeguu.core.model">
+      <data key="d0">0.22070478205846744</data>
+      <data key="d1">43</data>
+      <data key="d2">2</data>
+      <data key="d3">zeeguu.core.model</data>
+    </node>
+    <node id="zeeguu.logging">
+      <data key="d0">0.07111171742144104</data>
+      <data key="d1">2</data>
+      <data key="d2">2</data>
+      <data key="d3">zeeguu.logging</data>
+    </node>
+    <node id="zeeguu.core">
+      <data key="d0">0.10435495961284348</data>
+      <data key="d1">8</data>
+      <data key="d2">4</data>
+      <data key="d3">zeeguu.core</data>
+    </node>
+    <node id="zeeguu.core.content_quality">
+      <data key="d0">0.01478004310765061</data>
+      <data key="d1">1</data>
+      <data key="d2">2</data>
+      <data key="d3">zeeguu.core.content_quality</data>
+    </node>
+    <node id="zeeguu.core.content_retriever">
+      <data key="d0">0.01681296615918531</data>
+      <data key="d1">12</data>
+      <data key="d2">2</data>
+      <data key="d3">zeeguu.core.content_retriever</data>
+    </node>
+    <node id="zeeguu.core.util">
+      <data key="d0">0.061826472812638415</data>
+      <data key="d1">9</data>
+      <data key="d2">4</data>
+      <data key="d3">zeeguu.core.util</data>
+    </node>
+    <node id="zeeguu.core.elastic">
+      <data key="d0">0.024553390317954726</data>
+      <data key="d1">2</data>
+      <data key="d2">2</data>
+      <data key="d3">zeeguu.core.elastic</data>
+    </node>
+    <node id="zeeguu.api.utils">
+      <data key="d0">0.02527098517205517</data>
+      <data key="d1">3</data>
+      <data key="d2">5</data>
+      <data key="d3">zeeguu.api.utils</data>
+    </node>
+    <node id="zeeguu.core.sql">
+      <data key="d0">0.019997616972348302</data>
+      <data key="d1">2</data>
+      <data key="d2">5</data>
+      <data key="d3">zeeguu.core.sql</data>
+    </node>
+    <node id="zeeguu.api.endpoints">
+      <data key="d0">0.019197424915664608</data>
+      <data key="d1">55</data>
+      <data key="d2">5</data>
+      <data key="d3">zeeguu.api.endpoints</data>
+    </node>
+    <node id="zeeguu.core.word_scheduling">
+      <data key="d0">0.01681296615918531</data>
+      <data key="d1">5</data>
+      <data key="d2">2</data>
+      <data key="d3">zeeguu.core.word_scheduling</data>
+    </node>
+    <node id="zeeguu.core.language">
+      <data key="d0">0.02133496727110966</data>
+      <data key="d1">2</data>
+      <data key="d2">4</data>
+      <data key="d3">zeeguu.core.language</data>
+    </node>
+    <node id="zeeguu.core.constants">
+      <data key="d0">0.03432772186550774</data>
+      <data key="d1">6</data>
+      <data key="d2">4</data>
+      <data key="d3">zeeguu.core.constants</data>
+    </node>
+    <node id="zeeguu.core.bookmark_quality">
+      <data key="d0">0.013827310372426349</data>
+      <data key="d1">3</data>
+      <data key="d2">2</data>
+      <data key="d3">zeeguu.core.bookmark_quality</data>
+    </node>
+    <node id="zeeguu.core.definition_of_learned">
+      <data key="d0">0.013827310372426349</data>
+      <data key="d1">4</data>
+      <data key="d2">2</data>
+      <data key="d3">zeeguu.core.definition_of_learned</data>
+    </node>
+    <node id="zeeguu.core.behavioral_modeling">
+      <data key="d0">0.013827310372426349</data>
+      <data key="d1">2</data>
+      <data key="d2">2</data>
+      <data key="d3">zeeguu.core.behavioral_modeling</data>
+    </node>
+    <node id="zeeguu.core.feed_handler">
+      <data key="d0">0.013827310372426349</data>
+      <data key="d1">2</data>
+      <data key="d2">2</data>
+      <data key="d3">zeeguu.core.feed_handler</data>
+    </node>
+    <node id="zeeguu.api.app">
+      <data key="d0">0.020240966194688285</data>
+      <data key="d1">80</data>
+      <data key="d2">1</data>
+      <data key="d3">zeeguu.api.app</data>
+    </node>
+    <node id="zeeguu.config.loader">
+      <data key="d0">0.016676171072733774</data>
+      <data key="d1">10</data>
+      <data key="d2">1</data>
+      <data key="d3">zeeguu.config.loader</data>
+    </node>
+    <node id="zeeguu.api.custom_fmd_graphs">
+      <data key="d0">0.010941152098869407</data>
+      <data key="d1">3</data>
+      <data key="d2">2</data>
+      <data key="d3">zeeguu.api.custom_fmd_graphs</data>
+    </node>
+    <node id="zeeguu.cl.">
+      <data key="d0">0.010941152098869407</data>
+      <data key="d2">1</data>
+      <data key="d3">zeeguu.cl.</data>
+    </node>
+    <node id="zeeguu.core.account_management">
+      <data key="d0">0.01114014712527344</data>
+      <data key="d1">2</data>
+      <data key="d2">4</data>
+      <data key="d3">zeeguu.core.account_management</data>
+    </node>
+    <node id="zeeguu.core.emailer">
+      <data key="d0">0.01536289726598753</data>
+      <data key="d1">2</data>
+      <data key="d2">5</data>
+      <data key="d3">zeeguu.core.emailer</data>
+    </node>
+    <node id="zeeguu.core.user_activity_hooks">
+      <data key="d0">0.011040649612071423</data>
+      <data key="d1">2</data>
+      <data key="d2">5</data>
+      <data key="d3">zeeguu.core.user_activity_hooks</data>
+    </node>
+    <node id="zeeguu.core.exercises">
+      <data key="d0">0.011040649612071423</data>
+      <data key="d1">2</data>
+      <data key="d2">3</data>
+      <data key="d3">zeeguu.core.exercises</data>
+    </node>
+    <node id="zeeguu.core.nlp_pipeline">
+      <data key="d0">0.011040649612071423</data>
+      <data key="d1">5</data>
+      <data key="d2">5</data>
+      <data key="d3">zeeguu.core.nlp_pipeline</data>
+    </node>
+    <node id="zeeguu.core.content_recommender">
+      <data key="d0">0.011239644638475457</data>
+      <data key="d1">5</data>
+      <data key="d2">2</data>
+      <data key="d3">zeeguu.core.content_recommender</data>
+    </node>
+    <node id="zeeguu.core.crowd_translations">
+      <data key="d0">0.011040649612071423</data>
+      <data key="d1">8</data>
+      <data key="d2">2</data>
+      <data key="d3">zeeguu.core.crowd_translations</data>
+    </node>
+    <node id="zeeguu.core.user_statistics">
+      <data key="d0">0.011637634691283521</data>
+      <data key="d1">1</data>
+      <data key="d2">4</data>
+      <data key="d3">zeeguu.core.user_statistics</data>
+    </node>
+    <node id="zeeguu.core.ml_models">
+      <data key="d0">0.017222610035943057</data>
+      <data key="d1">3</data>
+      <data key="d2">2</data>
+      <data key="d3">zeeguu.core.ml_models</data>
+    </node>
+    <node id="zeeguu.core.semantic_search">
+      <data key="d0">0.011893884834093668</data>
+      <data key="d1">6</data>
+      <data key="d2">2</data>
+      <data key="d3">zeeguu.core.semantic_search</data>
+    </node>
+    <node id="zeeguu.core.content_cleaning">
+      <data key="d0">0.012846617569317927</data>
+      <data key="d1">3</data>
+      <data key="d2">2</data>
+      <data key="d3">zeeguu.core.content_cleaning</data>
+    </node>
+    <node id="zeeguu.core.semantic_vector_api">
+      <data key="d0">0.016441515393256195</data>
+      <data key="d1">7</data>
+      <data key="d2">2</data>
+      <data key="d3">zeeguu.core.semantic_vector_api</data>
+    </node>
+    <node id="zeeguu.core.word_stats">
+      <data key="d0">0.015633346342078996</data>
+      <data key="d1">3</data>
+      <data key="d2">3</data>
+      <data key="d3">zeeguu.core.word_stats</data>
+    </node>
+    <node id="zeeguu.core.word_filter">
+      <data key="d0">0.015633346342078996</data>
+      <data key="d1">1</data>
+      <data key="d2">3</data>
+      <data key="d3">zeeguu.core.word_filter</data>
+    </node>
+    <node id="zeeguu.core.reading_analysis">
+      <data key="d0">0.010941152098869407</data>
+      <data key="d2">2</data>
+      <data key="d3">zeeguu.core.reading_analysis</data>
+    </node>
+    <edge source="zeeguu.core.tokenization" target="zeeguu.config">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.tokenization" target="zeeguu.core.model">
+      <data key="d4">3</data>
+    </edge>
+    <edge source="zeeguu.core.model" target="zeeguu.logging">
+      <data key="d4">7</data>
+    </edge>
+    <edge source="zeeguu.core.model" target="zeeguu.core">
+      <data key="d4">22</data>
+    </edge>
+    <edge source="zeeguu.core.model" target="zeeguu.core.tokenization">
+      <data key="d4">2</data>
+    </edge>
+    <edge source="zeeguu.core.model" target="zeeguu.core.content_quality">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.model" target="zeeguu.core.content_retriever">
+      <data key="d4">2</data>
+    </edge>
+    <edge source="zeeguu.core.model" target="zeeguu.core.util">
+      <data key="d4">13</data>
+    </edge>
+    <edge source="zeeguu.core.model" target="zeeguu.core.elastic">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.model" target="zeeguu.api.utils">
+      <data key="d4">3</data>
+    </edge>
+    <edge source="zeeguu.core.model" target="zeeguu.core.sql">
+      <data key="d4">3</data>
+    </edge>
+    <edge source="zeeguu.core.model" target="zeeguu.api.endpoints">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.model" target="zeeguu.core.word_scheduling">
+      <data key="d4">2</data>
+    </edge>
+    <edge source="zeeguu.core.model" target="zeeguu.core.language">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.model" target="zeeguu.core.constants">
+      <data key="d4">3</data>
+    </edge>
+    <edge source="zeeguu.core.model" target="zeeguu.core.bookmark_quality">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.model" target="zeeguu.core.definition_of_learned">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.model" target="zeeguu.core.behavioral_modeling">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.model" target="zeeguu.core.feed_handler">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.content_quality" target="zeeguu.core.model">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.content_quality" target="zeeguu.core.ml_models">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.content_retriever" target="zeeguu.logging">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.content_retriever" target="zeeguu.core.semantic_search">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.content_retriever" target="zeeguu.core.content_quality">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.content_retriever" target="zeeguu.core">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.content_retriever" target="zeeguu.core.model">
+      <data key="d4">6</data>
+    </edge>
+    <edge source="zeeguu.core.content_retriever" target="zeeguu.core.content_cleaning">
+      <data key="d4">2</data>
+    </edge>
+    <edge source="zeeguu.core.content_retriever" target="zeeguu.core.elastic">
+      <data key="d4">2</data>
+    </edge>
+    <edge source="zeeguu.core.content_retriever" target="zeeguu.core.constants">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.util" target="zeeguu.logging">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.util" target="zeeguu.core">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.util" target="zeeguu.core.constants">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.util" target="zeeguu.core.tokenization">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.util" target="zeeguu.core.model">
+      <data key="d4">2</data>
+    </edge>
+    <edge source="zeeguu.core.util" target="zeeguu.core.language">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.elastic" target="zeeguu.core.model">
+      <data key="d4">5</data>
+    </edge>
+    <edge source="zeeguu.core.elastic" target="zeeguu.core.semantic_vector_api">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.api.utils" target="zeeguu.logging">
+      <data key="d4">2</data>
+    </edge>
+    <edge source="zeeguu.api.utils" target="zeeguu.core.model">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.api.utils" target="zeeguu.api.endpoints">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.sql" target="zeeguu.core.model">
+      <data key="d4">2</data>
+    </edge>
+    <edge source="zeeguu.api.endpoints" target="zeeguu.core.account_management">
+      <data key="d4">2</data>
+    </edge>
+    <edge source="zeeguu.api.endpoints" target="zeeguu.logging">
+      <data key="d4">5</data>
+    </edge>
+    <edge source="zeeguu.api.endpoints" target="zeeguu.core.emailer">
+      <data key="d4">5</data>
+    </edge>
+    <edge source="zeeguu.api.endpoints" target="zeeguu.api.utils">
+      <data key="d4">57</data>
+    </edge>
+    <edge source="zeeguu.api.endpoints" target="zeeguu.core.model">
+      <data key="d4">59</data>
+    </edge>
+    <edge source="zeeguu.api.endpoints" target="zeeguu.core.user_activity_hooks">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.api.endpoints" target="zeeguu.core.word_scheduling">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.api.endpoints" target="zeeguu.core.exercises">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.api.endpoints" target="zeeguu.core.nlp_pipeline">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.api.endpoints" target="zeeguu.core.tokenization">
+      <data key="d4">2</data>
+    </edge>
+    <edge source="zeeguu.api.endpoints" target="zeeguu.core.content_recommender">
+      <data key="d4">3</data>
+    </edge>
+    <edge source="zeeguu.api.endpoints" target="zeeguu.config">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.api.endpoints" target="zeeguu.core">
+      <data key="d4">13</data>
+    </edge>
+    <edge source="zeeguu.api.endpoints" target="zeeguu.core.crowd_translations">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.api.endpoints" target="zeeguu.core.content_retriever">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.api.endpoints" target="zeeguu.core.user_statistics">
+      <data key="d4">7</data>
+    </edge>
+    <edge source="zeeguu.api.endpoints" target="zeeguu.core.sql">
+      <data key="d4">4</data>
+    </edge>
+    <edge source="zeeguu.core.word_scheduling" target="zeeguu.core.model">
+      <data key="d4">8</data>
+    </edge>
+    <edge source="zeeguu.core.language" target="zeeguu.core.model">
+      <data key="d4">3</data>
+    </edge>
+    <edge source="zeeguu.core.language" target="zeeguu.core.util">
+      <data key="d4">5</data>
+    </edge>
+    <edge source="zeeguu.core.language" target="zeeguu.core">
+      <data key="d4">7</data>
+    </edge>
+    <edge source="zeeguu.core.language" target="zeeguu.core.constants">
+      <data key="d4">3</data>
+    </edge>
+    <edge source="zeeguu.core.bookmark_quality" target="zeeguu.core.model">
+      <data key="d4">2</data>
+    </edge>
+    <edge source="zeeguu.core.feed_handler" target="zeeguu.core.util">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.feed_handler" target="zeeguu.logging">
+      <data key="d4">2</data>
+    </edge>
+    <edge source="zeeguu.api.app" target="zeeguu.logging">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.api.app" target="zeeguu.config.loader">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.api.app" target="zeeguu.core.model">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.api.custom_fmd_graphs" target="zeeguu.core.model">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.cl." target="zeeguu.api.app">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.account_management" target="zeeguu.core.emailer">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.account_management" target="zeeguu.core.model">
+      <data key="d4">3</data>
+    </edge>
+    <edge source="zeeguu.core.account_management" target="zeeguu.core">
+      <data key="d4">2</data>
+    </edge>
+    <edge source="zeeguu.core.emailer" target="zeeguu.logging">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.emailer" target="zeeguu.core.model">
+      <data key="d4">2</data>
+    </edge>
+    <edge source="zeeguu.core.user_activity_hooks" target="zeeguu.logging">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.user_activity_hooks" target="zeeguu.core.constants">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.user_activity_hooks" target="zeeguu.core.model">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.user_activity_hooks" target="zeeguu.core.emailer">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.exercises" target="zeeguu.core.word_stats">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.exercises" target="zeeguu.core.word_filter">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.content_recommender" target="zeeguu.core.elastic">
+      <data key="d4">2</data>
+    </edge>
+    <edge source="zeeguu.core.content_recommender" target="zeeguu.core.model">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.content_recommender" target="zeeguu.core.util">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.crowd_translations" target="zeeguu.core.model">
+      <data key="d4">2</data>
+    </edge>
+    <edge source="zeeguu.core.user_statistics" target="zeeguu.core.constants">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.user_statistics" target="zeeguu.core">
+      <data key="d4">5</data>
+    </edge>
+    <edge source="zeeguu.core.user_statistics" target="zeeguu.core.model">
+      <data key="d4">5</data>
+    </edge>
+    <edge source="zeeguu.core.ml_models" target="zeeguu.core.model">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.semantic_search" target="zeeguu.core.model">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.semantic_search" target="zeeguu.core.semantic_vector_api">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.semantic_search" target="zeeguu.core.elastic">
+      <data key="d4">2</data>
+    </edge>
+    <edge source="zeeguu.core.semantic_search" target="zeeguu.core.util">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.content_cleaning" target="zeeguu.core.model">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.content_cleaning" target="zeeguu.core">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.semantic_vector_api" target="zeeguu.core.model">
+      <data key="d4">1</data>
+    </edge>
+    <edge source="zeeguu.core.reading_analysis" target="zeeguu.core.model">
+      <data key="d4">1</data>
+    </edge>
+  </graph>
+</graphml>

@@ -11,6 +11,8 @@ import matplotlib as mpl
 import community.community_louvain as community_louvain
 from matplotlib import colors as mcolors
 import py4cytoscape as p4c
+import yaml
+from graphviz import Digraph
 
 # ---------- 1. Clone Repo If Not Exists Locally ----------
 
@@ -557,7 +559,89 @@ def export_graph_for_cytoscape(G, pagerank, churn_map, partition, filename="zeeg
 
     nx.write_graphml(G, filename)
     print(f"Graph exported to {filename}")
+    export_graph_data(G)
     return filename
+
+def export_graph_data(g, label="graph"):
+    with open(f"{label}_nodes.txt", "w", encoding="utf8") as nf:
+        nf.write(f"Total nodes: {len(g.nodes)}\n")
+        nf.write("Name\tCommunity\tPageRank\tChurn\n")
+        for node in sorted(g.nodes):
+            name = g.nodes[node].get("name", node)
+            community = g.nodes[node].get("community", 0)
+            pagerank = g.nodes[node].get("pagerank", 0)
+            churn = g.nodes[node].get("churn", "?")
+            nf.write(f"{name}\t{community}\t{pagerank:.5f}\t{churn}\n")
+
+    # Export edges
+    with open(f"{label}_edges.txt", "w", encoding="utf8") as ef:
+        ef.write(f"Total edges: {len(g.edges)}\n")
+        ef.write("Source\tTarget\tWeight\n")
+        for s, t in sorted(g.edges):
+            weight = g.edges[s, t].get("weight", 1)
+            ef.write(f"{s}\t{t}\t{weight}\n")
+
+    print(f"Exported {len(g.nodes)} nodes and {len(g.edges)} edges to text.")
+
+# 5.3 Deployment view
+def generate_deployment_view():
+    # === Load docker-compose.yml ===
+    with open("zeeguu-api/docker-compose.yml", "r") as f:
+        compose = yaml.safe_load(f)
+
+    services = compose.get("services", {})
+    networks = compose.get("networks", {})
+
+    # === Create directed graph ===
+    G = nx.DiGraph()
+
+    # Add service nodes
+    for service_name in services:
+        G.add_node(service_name, type="service")
+
+    # Add edges for depends_on relationships
+    for service_name, service in services.items():
+        depends_on = service.get("depends_on", [])
+        for dependency in depends_on:
+            G.add_edge(dependency, service_name)
+
+    # Add network edges as infrastructure nodes
+    for net_name in networks:
+        net_node = f"network:{net_name}"
+        G.add_node(net_node, type="network")
+        for service_name, service in services.items():
+            if net_name in service.get("networks", []):
+                G.add_edge(net_node, service_name)
+
+    # === Draw the graph ===
+    pos = nx.spring_layout(G, k=1.2, iterations=100)
+
+    # Node styling
+    node_colors = [
+        "#1f77b4" if not node.startswith("network:") else "#ffcc00"
+        for node in G.nodes
+    ]
+    node_sizes = [1800 if not node.startswith("network:") else 1000 for node in G.nodes]
+
+    plt.figure(figsize=(14, 10))
+    nx.draw(
+        G, pos,
+        with_labels=True,
+        node_color=node_colors,
+        node_size=node_sizes,
+        edge_color="gray",
+        font_size=9,
+        font_weight='bold'
+    )
+    plt.title("Zeeguu Deployment View (from docker-compose)")
+    plt.axis("off")
+    plt.tight_layout()
+    plt.show()
+
+    # === Export for Cytoscape ===
+    nx.write_graphml(G, "zeeguu_deployment.graphml")
+    print("Graph exported as 'zeeguu_deployment.graphml' for Cytoscape.")
+
 
 # ---------- 6. Run Everything ----------
 
@@ -593,10 +677,4 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"Error during Cytoscape visualization: {e}")
 
-    # export_graph_to_graphml(
-    #     focused_G,
-    #     "zeeguu_combined.graphml",
-    #     pagerank=pagerank,
-    #     churn=churn_map,
-    #     community=partition
-    # )
+    generate_deployment_view()
